@@ -3,7 +3,12 @@ package com.example.DonationPlateforme.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "ANNONCES")
@@ -11,7 +16,6 @@ public class Annonce {
 
     @Id
     @GeneratedValue
-    @Column(name = "id", updatable = false, nullable = false, columnDefinition = "UUID")
     private UUID id;
 
     @NotBlank(message = "Le titre est obligatoire")
@@ -26,15 +30,20 @@ public class Annonce {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     private User user;
 
-    public Annonce() {
-    }
+    @OneToMany(mappedBy = "annonce", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Product> products = new ArrayList<>();
 
-    public Annonce(String title, String description, User user) {
+    public Annonce() {}
+
+    public Annonce(String title, String description, User user, List<Product> products) {
         this.title = title;
         this.description = description;
         this.user = user;
+        this.products=products;
     }
 
     public UUID getId() {
@@ -67,5 +76,13 @@ public class Annonce {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 }
