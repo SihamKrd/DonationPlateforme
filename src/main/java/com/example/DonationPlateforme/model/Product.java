@@ -34,12 +34,17 @@ public class Product {
     @JsonBackReference
     private Annonce annonce;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ProductState productState;
+
     public Product() {}
 
-    public Product(String name, List<Category> categories, Annonce annonce) {
+    public Product(String name, ProductState productState, List<Category> categories, Annonce annonce) {
         this.name = name;
         this.categories = categories;
         this.annonce = annonce;
+        this.productState = productState;
     }
 
     public UUID getId() {
@@ -72,5 +77,13 @@ public class Product {
 
     public void setAnnonce(Annonce annonce) {
         this.annonce = annonce;
+    }
+
+    public ProductState getProductState() {
+        return productState;
+    }
+
+    public void setProductState(ProductState productState) {
+        this.productState = productState;
     }
 }

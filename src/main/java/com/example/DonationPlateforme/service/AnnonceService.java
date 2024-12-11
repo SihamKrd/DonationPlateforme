@@ -55,6 +55,9 @@ public class AnnonceService {
         // Si aucun produit n'est fourni, initialiser une liste vide
         annonce.setProducts(new ArrayList<>());
     }
+    if (annonce.getDeliveryMode() == null) {
+        throw new RuntimeException("Le mode de remise doit être spécifié");
+    } 
     return annonceRepository.save(annonce);
 }
 

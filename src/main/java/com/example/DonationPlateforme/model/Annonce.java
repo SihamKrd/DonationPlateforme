@@ -3,10 +3,16 @@ package com.example.DonationPlateforme.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -33,17 +39,32 @@ public class Annonce {
     @JsonBackReference
     private User user;
 
+    @Enumerated(EnumType.STRING)  
+    @Column(nullable = false)
+    private DeliveryMode deliveryMode;  
+
     @OneToMany(mappedBy = "annonce", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Product> products = new ArrayList<>();
+     
+    @ElementCollection
+    @CollectionTable(name = "annonce_keywords", joinColumns = @JoinColumn(name = "annonce_id"))
+    @Column(name = "keyword")
+    private Set<String> keywords = new HashSet<>();
 
+    @CreationTimestamp
+    @Column(nullable = false,updatable = false)
+    private LocalDateTime dateCreation;
+    
     public Annonce() {}
 
-    public Annonce(String title, String description, User user, List<Product> products) {
+    public Annonce(String title, String description, User user, List<Product> products,  DeliveryMode deliveryMode, Set<String> keywords) {
         this.title = title;
         this.description = description;
         this.user = user;
         this.products=products;
+        this.deliveryMode = deliveryMode;
+        this.keywords = keywords;
     }
 
     public UUID getId() {
@@ -84,5 +105,26 @@ public class Annonce {
 
     public void setProducts(List<Product> products) {
         this.products = products;
+    }
+    public DeliveryMode getDeliveryMode() {
+        return deliveryMode;
+    }
+
+    public void setDeliveryMode(DeliveryMode deliveryMode) {
+        this.deliveryMode = deliveryMode;
+    }
+    public Set<String> getKeywords() {
+        return keywords;
+    }
+
+    public void setKeywords(Set<String> keywords) {
+        this.keywords = keywords;
+    }
+    public LocalDateTime getDateCreation() {
+        return dateCreation;
+    }
+
+    public void setDateCreation(LocalDateTime dateCreation) {
+        this.dateCreation = dateCreation;
     }
 }
