@@ -127,4 +127,17 @@ public class Annonce {
     public void setDateCreation(LocalDateTime dateCreation) {
         this.dateCreation = dateCreation;
     }
+    @ManyToOne
+    @JoinColumn(name = "geographic_zone_id")
+    private GeographicZone geographicZone;  // Relation avec la zone géographique
+
+    // Autres champs et méthodes
+
+    public GeographicZone getGeographicZone() {
+        return geographicZone;
+    }
+
+    public void setGeographicZone(GeographicZone geographicZone) {
+        this.geographicZone = geographicZone;
+    }
 }
