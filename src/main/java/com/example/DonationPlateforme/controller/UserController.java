@@ -1,5 +1,6 @@
 package com.example.DonationPlateforme.controller;
 
+import com.example.DonationPlateforme.dto.RegistrationDto;
 import com.example.DonationPlateforme.model.User;
 import com.example.DonationPlateforme.service.UserService;
 
@@ -17,7 +18,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
+    public User createUser(@RequestBody RegistrationDto user) {
         return userService.saveUser(user);
     }
 
