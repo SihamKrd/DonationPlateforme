@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails du Lot de Commande</title>
+
+    <!-- CSS intégré ici -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #fff;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        li span {
+            font-weight: bold;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #fff;
+            background-color: #007BFF;
+            padding: 10px 20px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Détails du Lot de Commande</h1>
+
+    <!-- Affichage dynamique du Receiver -->
+    <p><strong>Receiver:</strong> <span th:text="${orderLot.receiver.name}">Receiver Name</span></p>
+
+    <!-- Affichage dynamique du Donor -->
+    <p><strong>Donor:</strong> <span th:text="${orderLot.donor.name}">Donor Name</span></p>
+
+    <h2>Produits:</h2>
+    <ul>
+        <!-- Affichage dynamique des produits -->
+        <li th:each="product : ${orderLot.products}">
+            <span th:text="${product.name}">Product Name</span>
+        </li>
+    </ul>
+
+    <a href="/order-lots">Retour</a>
+</body>
+</html>
