@@ -29,7 +29,7 @@ public class Product {
     )
     private List<Category> categories = new ArrayList<>();
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "annonce_id", nullable = true)
     @JsonBackReference
     private Annonce annonce;

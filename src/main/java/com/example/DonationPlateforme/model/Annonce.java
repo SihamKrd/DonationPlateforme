@@ -5,14 +5,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -38,15 +36,17 @@ public class Annonce {
     @JoinColumn(name = "user_id", nullable = false)
     @JsonBackReference
     private User user;
-
+    
     @Enumerated(EnumType.STRING)  
     @Column(nullable = false)
     private DeliveryMode deliveryMode;  
 
-    @OneToMany(mappedBy = "annonce", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "product_id", nullable = false)
     @JsonManagedReference
-    private List<Product> products = new ArrayList<>();
-     
+    private Product product;
+
+    
     @ElementCollection
     @CollectionTable(name = "annonce_keywords", joinColumns = @JoinColumn(name = "annonce_id"))
     @Column(name = "keyword")
@@ -58,11 +58,11 @@ public class Annonce {
     
     public Annonce() {}
 
-    public Annonce(String title, String description, User user, List<Product> products,  DeliveryMode deliveryMode, Set<String> keywords) {
+    public Annonce(String title, String description, User user, Product product,  DeliveryMode deliveryMode, Set<String> keywords) {
         this.title = title;
         this.description = description;
         this.user = user;
-        this.products=products;
+        this.product = product;
         this.deliveryMode = deliveryMode;
         this.keywords = keywords;
     }
@@ -99,20 +99,22 @@ public class Annonce {
         this.user = user;
     }
 
-    public List<Product> getProducts() {
-        return products;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
-    public DeliveryMode getDeliveryMode() {
-        return deliveryMode;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public void setDeliveryMode(DeliveryMode deliveryMode) {
         this.deliveryMode = deliveryMode;
     }
+
+    public DeliveryMode getDeliveryMode() {
+        return deliveryMode;
+    }
+
     public Set<String> getKeywords() {
         return keywords;
     }
@@ -129,9 +131,7 @@ public class Annonce {
     }
     @ManyToOne
     @JoinColumn(name = "geographic_zone_id")
-    private GeographicZone geographicZone;  // Relation avec la zone géographique
-
-    // Autres champs et méthodes
+    private GeographicZone geographicZone;  
 
     public GeographicZone getGeographicZone() {
         return geographicZone;

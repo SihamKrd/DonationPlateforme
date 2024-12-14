@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier l'Annonce</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Modifier l'Annonce</h1>
+        <form th:action="@{/annonces/edit-form/{id}(id=${annonce.id})}" th:object="${annonce}" method="post">
+            <!-- Titre de l'annonce -->
+            <label for="title">Titre :</label>
+            <input type="text" id="title" name="title" th:value="*{title}" required />
+        
+            <!-- Description de l'annonce -->
+            <label for="description">Description :</label>
+            <textarea id="description" name="description" th:text="*{description}" required></textarea>
+        
+            <!-- Zone géographique -->
+            <label for="geographicZone">Zone géographique :</label>
+            <select id="geographicZone" name="geographicZone.id" required>
+                <option th:each="zone : ${zones}" th:value="${zone.id}" th:text="${zone.name}" th:selected="${zone.id == annonce.geographicZone?.id}">
+                </option>
+            </select>
+        
+            <!-- Mode de livraison -->
+            <label for="deliveryMode">Mode de livraison :</label>
+            <select id="deliveryMode" name="deliveryMode" required>
+                <option th:each="mode : ${deliveryModes}" th:value="${mode}" th:text="${mode}" th:selected="${mode == annonce.deliveryMode}">
+                </option>
+            </select>
+        
+            <!-- Mots-clés -->
+            <label for="keywords">Mots-clés :</label>
+            <input type="text" id="keywords" name="keywords" th:value="${keywords}" />
+            
+            <!-- Produit -->
+            <h2>Produit associé</h2>
+            <label for="productName">Nom du produit :</label>
+            <input type="text" id="productName" th:name="product.name" th:value="*{product.name}" required />
+        
+            <label for="productState">État du produit :</label>
+            <select id="productState" name="product.productState" required>
+                <option th:each="state : ${productStates}" th:value="${state}" th:text="${state}" th:selected="${state == annonce.product.productState}">
+                </option>
+            </select>
+        
+            <!-- Catégories associées -->
+            <label for="categories">Catégories :</label>
+            <select id="categories" name="product.categories" multiple>
+                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}" th:selected="${#lists.contains(annonce.product.categories, category)}">
+                </option>
+            </select>
+        
+            <button type="submit">Enregistrer</button>
+        </form>
+        
+    </div>
+</body>
+</html>

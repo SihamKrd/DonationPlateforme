@@ -1,4 +1,4 @@
-package com.example.DonationPlateforme.model;
+package com.example.DonationPlateforme.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -15,7 +15,6 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Vérifier si les zones géographiques par défaut existent déjà
         if (geographicZoneRepository.count() == 0) {
             // Création des zones géographiques principales
             GeographicZone france = new GeographicZone("France");

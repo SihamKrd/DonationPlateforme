@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer une Annonce</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Créer une Annonce</h1>
+        <form th:action="@{/annonces/create-form}" method="post">
+            <!-- Titre de l'annonce -->
+            <label for="title">Titre :</label>
+            <input type="text" id="title" name="title" placeholder="Titre de l'annonce" required />
+            
+            <!-- Description de l'annonce -->
+            <label for="description">Description :</label>
+            <textarea id="description" name="description" placeholder="Description de l'annonce" required></textarea>
+            
+            <!-- Produit -->
+            <h2>Produit associé</h2>
+            <label for="productName">Nom du produit :</label>
+            <input type="text" id="productName" name="productName" placeholder="Nom du produit" required />
+            
+            <label for="productState">État du produit :</label>
+            <select id="productState" name="productState" required>
+                <option value="NEUF">Neuf</option>
+                <option value="TRES_BON_ETAT">Très bon état</option>
+                <option value="BON_ETAT">Bon état</option>
+                <option value="ETAT_CORRECT">État correct</option>
+                <option value="MAUVAIS_ETAT">Mauvais état</option>
+                <option value="NON_FONCTIONNEL">Non fonctionnel</option>
+            </select>
+            
+            <!-- Catégories -->
+            <h3>Catégories</h3>
+            <div th:each="category : ${categories}" style="display: inline-flex; align-items: center; margin-right: 15px;">
+                <input type="checkbox" th:id="'category_' + ${category.id}" th:value="${category.id}" name="categoryIds" style="margin-right: 5px;" />
+                <label th:for="'category_' + ${category.id}" th:text="${category.name}"></label>
+            </div>
+            
+            
+            <!-- Mode de livraison -->
+            <label for="deliveryMode">Mode de livraison :</label>
+            <select id="deliveryMode" name="deliveryMode" required>
+                <option value="MAIN_PROPRE">Remise en main propre</option>
+                <option value="ENVOYE">Remise par envoi</option>
+            </select>
+            
+            <!-- Zone géographique -->
+            <label for="geographicZone">Zone géographique :</label>
+            <select id="geographicZone" name="geographicZoneId" required>
+                <option value="" disabled selected>Sélectionnez une zone</option>
+                <th:block th:each="zone : ${zones}">
+                    <!-- Zone parent -->
+                    <option th:value="${zone.id}" th:text="${zone.name}"></option>
+                </th:block>
+            </select>
+            
+            
+
+            <!-- Mots-clés -->
+            <label for="keywords">Mots-clés (séparés par des virgules) :</label>
+            <input type="text" id="keywords" name="keywords" placeholder="Exemple : voiture, électronique, neuf" />
+            
+            <!-- Bouton de soumission -->
+            <button type="submit">Créer l'annonce</button>
+        </form>
+    </div>
+</body>
+</html>

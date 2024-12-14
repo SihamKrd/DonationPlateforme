@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Annonces</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+        }
+        .annonce-list {
+            list-style: none;
+            padding: 0;
+        }
+        .annonce-item {
+            background-color: #fff;
+            margin-bottom: 10px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .annonce-item a {
+            text-decoration: none;
+            color: #007BFF;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .annonce-item a:hover {
+            text-decoration: underline;
+        }
+        .product-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+        .actions {
+            margin-top: 10px;
+        }
+        .actions a, .actions form button {
+            text-decoration: none;
+            color: #fff;
+            background-color: #007BFF;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .actions a:hover, .actions form button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" th:fragment="annoncesList">
+        <h1>Liste des Annonces</h1>
+        <ul class="annonce-list">
+            <li class="annonce-item" th:each="annonce : ${annonces}">
+                <a th:href="@{/annonces/{id}(id=${annonce.id})}" th:text="${annonce.title}">
+                    Titre de l'annonce
+                </a>
+                <p th:text="${annonce.description}">Description de l'annonce</p>
+
+                <div class="product-info">
+                    <p>Produit associé : <span th:text="${annonce.product.name}">Nom du produit</span></p>
+                </div>
+
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

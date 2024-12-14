@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        header {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 {
+            margin: 0;
+        }
+        header a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .content {
+            padding: 20px;
+        }
+        .actions {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .actions a {
+            display: inline-block;
+            text-decoration: none;
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .actions a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>Accueil</h1>
+        <form action="/auth/logout" method="post" style="display: inline;">
+            <button type="submit" style="background: none; border: none; color: white; font-size: 1rem; cursor: pointer;">
+                Logout
+            </button>
+        </form>
+    </header>
+
+    <!-- Contenu principal -->
+    <div class="content" th:include="annonces :: annoncesList"></div>
+
+    <!-- Bouton pour ajouter une annonce -->
+    <div class="actions">
+        <a href="/annonces/create-form">Ajouter une Annonce</a>
+    </div>
+</body>
+</html>
