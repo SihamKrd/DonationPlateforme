@@ -19,8 +19,13 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
+<<<<<<< HEAD
                 .requestMatchers("/auth/login", "/auth/register", "/users", "/h2-console").permitAll() 
                 .anyRequest().authenticated() 
+=======
+                .requestMatchers("/auth/login", "/auth/register","/users","/h2-console").permitAll() // Routes publiques
+                .anyRequest().authenticated() // Routes protégées
+>>>>>>> fca583781ab7494f668ed23d2afe646b2df85875
             )
             .formLogin(form -> form
                 .loginPage("/auth/login") 

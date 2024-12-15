@@ -21,7 +21,9 @@ public class AnnonceService {
 
     @Autowired
     private AnnonceRepository annonceRepository;
-
+    public List<Annonce> getAllAnnonces() {
+        return annonceRepository.findAll(); // Fetches all annonces from the database
+    }
     @Autowired
     private UserRepository userRepository;
 
