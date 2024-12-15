@@ -21,6 +21,9 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
+    public List<User> getAllUsers() {
+        return userRepository.findAll(); // This fetches all users from the database
+    }
     @Autowired
     private PasswordEncoder passwordEncoder;
 
