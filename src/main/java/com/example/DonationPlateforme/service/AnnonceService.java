@@ -116,4 +116,12 @@ public class AnnonceService {
 
         annonceRepository.save(existingAnnonce);
     }
+
+    public Annonce getAnnonceById(UUID annonceId) {
+        return annonceRepository.findById(annonceId).orElse(null);
+    }
+
+    public List<Annonce> searchAnnonces(String keyword) {
+        return annonceRepository.findByTitleContainingIgnoreCase(keyword);
+    }
 }

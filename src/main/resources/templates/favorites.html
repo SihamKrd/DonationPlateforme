@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Favoris</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #444;
+        }
+        .favorite-item {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+        .favorite-item a {
+            color: #007BFF;
+            text-decoration: none;
+            font-size: 18px;
+        }
+        .favorite-item a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mes Favoris</h1>
+        <div th:if="${favorites.isEmpty()}">
+            <p>Vous n'avez ajouté aucune annonce en favoris.</p>
+        </div>
+        <div th:each="favorite : ${favorites}" class="favorite-item">
+            <a th:href="@{/annonces/{id}(id=${favorite.annonce.id})}" 
+               th:text="${favorite.annonce.title}">Titre de l'annonce</a>
+        </div>
+    </div>
+</body>
+</html>

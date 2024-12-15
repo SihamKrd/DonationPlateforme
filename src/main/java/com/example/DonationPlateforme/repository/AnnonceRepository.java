@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface AnnonceRepository extends JpaRepository<Annonce, UUID> {
     List<Annonce> findByUserId(UUID userId);
+    List<Annonce> findByTitleContainingIgnoreCase(String keyword);
 }

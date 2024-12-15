@@ -81,6 +81,7 @@
         <div class="annonce">
             <!-- Titre de l'annonce -->
             <h2 class="annonce-title" th:text="${annonce.title}">Titre de l'annonce</h2>
+            <div th:replace="fragments/favorite-button :: favoriteButton(${annonce.id}, ${isFavorite})"></div>
             
             <!-- Description de l'annonce -->
             <p class="annonce-description" th:text="${annonce.description}">Description de l'annonce</p>
@@ -123,6 +124,15 @@
                     <button type="submit" class="btn-delete">Supprimer</button>
                 </form>
             </div>
+            <div class="actions" th:if="${!isOwner}">
+                <form th:action="@{/orders/create-single-order}" method="post">
+                    <input type="hidden" name="receiverId" th:value="${#authentication.name}" />
+                    <input type="hidden" name="donorId" th:value="${annonce.user.id}" />
+                    <input type="hidden" name="annonceId" th:value="${annonce.id}" />
+                    <button type="submit">Commander ce produit</button>
+                </form>                        
+            </div>
+            
         </div>
     </div>
 </body>

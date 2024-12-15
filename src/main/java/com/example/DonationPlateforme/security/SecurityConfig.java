@@ -17,22 +17,22 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // Désactive la protection CSRF pour simplifier
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/auth/login", "/auth/register", "/users", "/annonces","/categories","/products","/order-lots","/h2-console").permitAll() // Routes publiques
-                .anyRequest().authenticated() // Routes protégées
+                .requestMatchers("/auth/login", "/auth/register", "/users", "/h2-console").permitAll() 
+                .anyRequest().authenticated() 
             )
             .formLogin(form -> form
-                .loginPage("/auth/login") // Chemin de la page de connexion
+                .loginPage("/auth/login") 
                 .usernameParameter("email")
-                .defaultSuccessUrl("/auth/success", true)
+                .defaultSuccessUrl("/home", true)
                 .loginProcessingUrl("/auth/login")
-                .failureUrl("/auth/login?error=true") // Redirection en cas d'échec
+                .failureUrl("/auth/login?error=true")
                 .permitAll()
             )
             .logout(logout -> logout
-                .logoutUrl("/auth/logout") // déconnexion
-                .logoutSuccessUrl("/auth/login?logout=true") // Redirection après déconnexion
+                .logoutUrl("/auth/logout") 
+                .logoutSuccessUrl("/auth/login?logout=true") 
                 .permitAll()
             );
 

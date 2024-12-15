@@ -14,26 +14,30 @@ public class OrderLot {
 
     @ManyToOne
     @JoinColumn(name = "receiver_id", nullable = false)
-    private User receiver; // Utilisateur qui reçoit les dons
+    private User receiver; // Utilisateur receveur
 
     @ManyToMany
     @JoinTable(
-        name = "order_lot_products",
+        name = "order_lot_annonces",
         joinColumns = @JoinColumn(name = "order_lot_id"),
-        inverseJoinColumns = @JoinColumn(name = "product_id")
+        inverseJoinColumns = @JoinColumn(name = "annonce_id")
     )
-    private List<Product> products; // Produits du lot (provenant de plusieurs annonces)
+    private List<Annonce> annonces; // Liste des annonces associées au lot
 
     @ManyToOne
     @JoinColumn(name = "donor_id", nullable = false)
-    private User donor; // Le donneur (les produits doivent provenir de ses annonces)
+    private User donor; // Donneur (les annonces proviennent de cet utilisateur)
+
+    @Enumerated(EnumType.STRING)
+    private OrderLotStatus status; // Statut de la commande (EN_ATTENTE, CONFIRMÉ, etc.)
 
     public OrderLot() {}
 
-    public OrderLot(User receiver, User donor, List<Product> products) {
+    public OrderLot(User receiver, User donor, List<Annonce> annonces) {
         this.receiver = receiver;
         this.donor = donor;
-        this.products = products;
+        this.annonces = annonces;
+        this.status = OrderLotStatus.EN_ATTENTE; // Statut par défaut
     }
 
     // Getters et Setters
@@ -61,12 +65,19 @@ public class OrderLot {
         this.donor = donor;
     }
 
-    public List<Product> getProducts() {
-        return products;
+    public List<Annonce> getAnnonces() {
+        return annonces;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
+    public void setAnnonces(List<Annonce> annonces) {
+        this.annonces = annonces;
+    }
+
+    public OrderLotStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(OrderLotStatus status) {
+        this.status = status;
     }
 }
- 

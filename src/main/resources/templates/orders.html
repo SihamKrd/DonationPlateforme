@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Commandes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #007BFF;
+        }
+        .order {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .order h3 {
+            margin: 0;
+            color: #007BFF;
+        }
+        .order p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mes Commandes</h1>
+        <div th:if="${orders.isEmpty()}">
+            <p>Aucune commande trouvée.</p>
+        </div>
+        <div th:each="order : ${orders}" class="order">
+            <h3 th:text="'Commande ID : ' + ${order.id}"></h3>
+            <p th:text="'Donneur : ' + ${order.donor.name}"></p>
+            <p th:text="'Statut : ' + ${order.status}"></p>
+            <p>Annonces :</p>
+            <ul>
+                <li th:each="annonce : ${order.annonces}" th:text="${annonce.title}"></li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

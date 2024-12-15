@@ -50,4 +50,17 @@ public class UserService {
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
+
+    public User getUserById(UUID userId) {
+        return userRepository.findById(userId).orElse(null);
+    }
+
+    public UUID getAuthenticatedUserId(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new IllegalArgumentException("Utilisateur introuvable.");
+        }
+        return user.getId();
+    }
+    
 }

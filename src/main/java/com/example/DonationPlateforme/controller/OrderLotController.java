@@ -1,72 +1,104 @@
 package com.example.DonationPlateforme.controller;
 
 import com.example.DonationPlateforme.model.OrderLot;
+import com.example.DonationPlateforme.model.User;
 import com.example.DonationPlateforme.service.OrderLotService;
+import com.example.DonationPlateforme.service.UserService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Controller  // Utilisez @Controller pour gérer les vues HTML
-@RequestMapping("/order-lots")
+@Controller
+@RequestMapping("/orders")
 public class OrderLotController {
 
-    private final OrderLotService orderLotService;
+    @Autowired
+    private OrderLotService orderLotService;
 
-    public OrderLotController(OrderLotService orderLotService) {
-        this.orderLotService = orderLotService;
-    }
+    @Autowired
+    private UserService userService;
 
     /**
-     * Endpoint pour créer un lot de produits à recevoir
+     * Créer une commande (lot)
      */
-    @PostMapping
-    public ResponseEntity<OrderLot> createOrderLot(@RequestBody Map<String, Object> request, Model model) {
+    @PostMapping("/create")
+    public ResponseEntity<OrderLot> createOrderLot(@RequestBody Map<String, Object> request) {
         try {
-            // Extraction des valeurs du corps de la requête
             UUID receiverId = UUID.fromString((String) request.get("receiverId"));
             UUID donorId = UUID.fromString((String) request.get("donorId"));
             List<Map<String, String>> products = (List<Map<String, String>>) request.get("products");
 
-            // Extraire les IDs de produits
             List<UUID> productIds = products.stream()
                 .map(product -> UUID.fromString(product.get("productId")))
                 .collect(Collectors.toList());
 
-            // Appel au service pour créer l'ordre de lot
             OrderLot orderLot = orderLotService.createOrderLot(receiverId, donorId, productIds);
 
-            // Ajouter le lot créé au modèle
-            model.addAttribute("orderLot", orderLot);
-
-            // Retourne une réponse avec le lot créé au format JSON
             return ResponseEntity.ok(orderLot);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);  // Gère les erreurs
+            return ResponseEntity.badRequest().build();
         }
     }
 
     /**
-     * Endpoint pour afficher un lot de commande spécifique
+     * Récupérer un lot par son ID
      */
     @GetMapping("/{orderLotId}")
     public String getOrderLot(@PathVariable UUID orderLotId, Model model) {
         try {
-            // Récupérer l'ordre de lot à partir du service
             OrderLot orderLot = orderLotService.getOrderLot(orderLotId);
-
-            // Ajouter l'objet 'orderLot' au modèle pour l'afficher avec Thymeleaf
             model.addAttribute("orderLot", orderLot);
-
-            // Retourner la vue HTML 'order-lot.html'
-            return "order-lot";  // Thymeleaf l'utilisera pour rendre la page avec les données du modèle
+            return "order-lot";
         } catch (RuntimeException e) {
-            // En cas d'erreur, redirige vers une page d'erreur
+            return "error";
+        }
+    }
+
+
+    @GetMapping("/user")
+    public String viewUserOrders(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
+            throw new SecurityException("Utilisateur non authentifié.");
+        }
+
+        String email = userDetails.getUsername();
+        User user = userService.findUserByEmail(email);
+
+        if (user == null) {
+            throw new IllegalArgumentException("Utilisateur introuvable.");
+        }
+
+        List<OrderLot> orders = orderLotService.getOrderLotsByReceiver(user.getId());
+        model.addAttribute("orders", orders);
+        return "orders"; 
+    }
+
+    @PostMapping("/create-single-order")
+    public String createSingleOrder(
+            @RequestParam String receiverId,
+            @RequestParam UUID donorId,
+            @RequestParam UUID annonceId,
+            Model model) {
+        try {
+            User user = userService.findUserByEmail(receiverId);
+            // Créer une commande pour un produit unique
+            OrderLot orderLot = orderLotService.createOrderLot(user.getId(), donorId, List.of(annonceId));
+            
+            model.addAttribute("orderLot", orderLot);
+            
+            return "redirect:/home";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Erreur lors de la création de la commande : " + e.getMessage());
             return "error";
         }
     }

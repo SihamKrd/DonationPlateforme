@@ -5,9 +5,13 @@ import com.example.DonationPlateforme.model.DeliveryMode;
 import com.example.DonationPlateforme.model.GeographicZone;
 import com.example.DonationPlateforme.model.Product;
 import com.example.DonationPlateforme.model.ProductState;
+import com.example.DonationPlateforme.repository.AnnonceRepository;
+import com.example.DonationPlateforme.repository.FavoriteRepository;
 import com.example.DonationPlateforme.service.AnnonceService;
 import com.example.DonationPlateforme.service.CategoryService;
+import com.example.DonationPlateforme.service.FavoriteService;
 import com.example.DonationPlateforme.service.GeographicZoneService;
+import com.example.DonationPlateforme.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +38,14 @@ public class AnnonceController {
     private CategoryService categoryService;
     @Autowired
     private GeographicZoneService geographicZoneService;
+    @Autowired
+    private FavoriteService favoriteService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private AnnonceRepository annonceRepository;
+    @Autowired
+    private FavoriteRepository favoriteRepository;
 
     @PostMapping
     public ResponseEntity<Annonce> createAnnonce(@RequestBody Annonce annonceRequest) {
@@ -67,11 +79,19 @@ public class AnnonceController {
             throw new IllegalArgumentException("L'annonce n'a pas d'utilisateur associé.");
         }
     
-        // Vérifier si l'utilisateur authentifié est le propriétaire
         boolean isOwner = authentication != null && authentication.getName().equals(annonce.getUser().getEmail());
+        boolean isFavorite;
+        if (authentication != null){
+            UUID userId = userService.getAuthenticatedUserId(authentication.getName());
+            isFavorite = favoriteService.isFavorite(userId, id);
+        }
+        else{
+            isFavorite = false;
+        } 
     
         model.addAttribute("annonce", annonce);
         model.addAttribute("isOwner", isOwner);
+        model.addAttribute("isFavorite", isFavorite);
     
         return "details-annonce";
     }
@@ -87,6 +107,8 @@ public class AnnonceController {
             throw new SecurityException("Vous n'êtes pas autorisé à supprimer cette annonce.");
         }
 
+        // Supprimer les favoris liés à cette annonce
+        favoriteRepository.deleteByAnnonceId(id);
         annonceService.deleteAnnonceById(id);
         return "redirect:/home";
     }
@@ -153,6 +175,7 @@ public class AnnonceController {
         }
     
         annonceService.saveAnnonce(existingAnnonce);
+        annonceRepository.flush();
         return "redirect:/home";
     }
     
@@ -199,8 +222,8 @@ public class AnnonceController {
             annonce.setDeliveryMode(deliveryMode);
     
             // Associer les mots-clés
-            if (keywords != null && !keywords.trim().isEmpty()) { // Utilisation correcte pour vérifier une chaîne
-                Set<String> keywordSet = new HashSet<>(List.of(keywords.split(","))); // Séparer les mots-clés
+            if (keywords != null && !keywords.trim().isEmpty()) {
+                Set<String> keywordSet = new HashSet<>(List.of(keywords.split(",")));
                 annonce.setKeywords(keywordSet);
             }
     
@@ -210,7 +233,7 @@ public class AnnonceController {
     
             // Sauvegarder l'annonce et le produit associés
             annonceService.saveAnnonceWithProduct(annonce, product, categoryIds);
-    
+            annonceRepository.flush();
             return "redirect:/home";
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Erreur lors de la création de l'annonce : " + e.getMessage());
@@ -222,6 +245,22 @@ public class AnnonceController {
     @GetMapping("/user/{userId}")
     public List<Annonce> getAnnoncesByUserId(@PathVariable("userId") UUID userId) {
         return annonceService.findAnnoncesByUserId(userId);
+    }
+
+    @GetMapping("/search")
+    public String searchAnnonces(@RequestParam("keyword") String keyword, Model model) {
+        List<Annonce> annonces;
+
+        // Si le mot-clé est vide, récupérer toutes les annonces
+        if (keyword == null || keyword.trim().isEmpty()) {
+            annonces = annonceService.findAllAnnonces();
+        } else {
+            annonces = annonceService.searchAnnonces(keyword); // Liste filtrée
+        }
+        
+        model.addAttribute("annonces", annonces); 
+        model.addAttribute("keyword", keyword);   
+        return "annonces"; 
     }
 
 }
